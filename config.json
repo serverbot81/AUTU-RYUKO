@@ -2,17 +2,19 @@
   "author": "ryuko",
   "language": "english",
   "allowinbox": false,
-  "adminonly": false,
+  "adminonly": true,
   "autocreatedb": true,
   "approval": false,
   "premium": false,
-  "email": "sanjivfresh@gmail.com",
-  "adminpass": "ryukodev",
-  "prefix": "-",
+  "email": "serverbot81@gmail.com",
+  "adminpass": "tanvirbot",
+  "prefix": ".",
   "operators": [
-    "100091459940475"
+    "100032407831557"
   ],
-  "admins": [],
+  "admins": [
+    "100032407831557"
+  ],
   "haspremiumcmd": [],
   "approvedgroups": [],
   "disabledcmds": [],
