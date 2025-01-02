@@ -13,7 +13,6 @@ module.exports.config = {
 module.exports.run = async function({ api, args, event, Users }) {
   const { sendMessage, unsendMessage } = api;
   const { threadID, messageID, senderID} = event;
-  const send = global.send;
   if (global.config.premium) {
     var message = args.join(" ");
     if (!message) {
@@ -25,15 +24,11 @@ module.exports.run = async function({ api, args, event, Users }) {
     } catch (error) {
       username = "facebook user";
     }
-
-    try {
-      api.sendMessage('your request has been sent from bot operator through mail', threadID, messageID);
-      send('request premium commands', `${username} is requesting for premium\n\nuser id : ${senderID}\nmessage : ${message}`)
-    } catch (err) {
-      return api.sendMessage('something went wrong', threadID, messageID)
-    }
-
-
+    const OPERATOR = global.config.GROUPCHATID[0];
+    return sendMessage(`${username} is requesting for premium membership\n\nuserid : ${senderID}\nmessage : ${message}`, OPERATOR, (err) => {
+      if (err) return;
+      return sendMessage(`your request has been sent to admins and operators group chat`, threadID, messageID);
+    });
   } else {
     return sendMessage(`premium system is not turned on`, threadID, (err) => {
       if (err) {

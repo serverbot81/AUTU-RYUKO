@@ -8,15 +8,18 @@ module.exports.config = {
 	description: "wikipedia search",
 	category: "without prefix",
 	usages: "[en] [question]",
-	cooldowns: 1
+	cooldowns: 1,
+	dependencies: {
+        "wikijs": ""
+    }
 }
 
 module.exports.languages = {
-    "bangla": {
-        "missingInput": "enter what you need to search for.",
-        "returnNotFound": "can't find %1"
+    "vi": {
+        "missingInput": "Nội dung cần tìm kiếm không được để trống!",
+        "returnNotFound": "Không tìm thấy nội dung %1"
     },
-    "english": {
+    "en": {
         "missingInput": "enter what you need to search for.",
         "returnNotFound": "can't find %1"
     }

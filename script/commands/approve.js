@@ -12,13 +12,13 @@ module.exports.config = {
 };
 
 module.exports.languages = {
-    "bangla": {
-        "listAdmin": 'approved list : \n\n%1',
-        "notHavePermssion": 'you have no permission to use "%1"',
-        "addedNewAdmin": 'approved %1 box :\n\n%2',
-        "removedAdmin": 'remove %1 box in approve lists :\n\n%2'
+    "vi": {
+        "listAdmin": 'Danh sách toàn bộ người điều hành bot: \n\n%1',
+        "notHavePermssion": 'Bạn không đủ quyền hạn để có thể sử dụng chức năng "%1"',
+        "addedNewAdmin": 'Đã thêm %1 người dùng trở thành người điều hành bot:\n\n%2',
+        "removedAdmin": 'Đã gỡ bỏ %1 người điều hành bot:\n\n%2'
     },
-    "english": {
+    "en": {
         "listAdmin": 'approved list : \n\n%1',
         "notHavePermssion": 'you have no permission to use "%1"',
         "addedNewAdmin": 'approved %1 box :\n\n%2',
@@ -29,20 +29,20 @@ module.exports.languages = {
 module.exports.run = async function ({ api, event, args, Threads, Users, permssion, getText }) {
     const content = args.slice(1, args.length);
     const { threadID, messageID, mentions } = event;
-    const configPath = require('../../config.json');
-    const { approvedgroups } = global.config;
+    const { approvedListsPath } = global.client;
+    const { APPROVED } = global.approved;
     const { userName } = global.data;
     const { writeFileSync } = global.nodemodule["fs-extra"];
     const mention = Object.keys(mentions);
-    delete require.cache[require.resolve('../../config.json')];
-    var config = require('../../config.json');
+    delete require.cache[require.resolve(approvedListsPath)];
+    var config = require(approvedListsPath);
     
        
     switch (args[0]) {
         case "list":
         case "all":
         case "-a": {
-            const listAdmin = approvedgroups || config.approvedgroups || [];
+            const listAdmin = APPROVED || config.APPROVED || [];
             var msg = [];
 
             for (const idAdmin of listAdmin) {
@@ -73,17 +73,17 @@ module.exports.run = async function ({ api, event, args, Threads, Users, permssi
 
                 for (const id of mention) {
                   
-                    approvedgroups.push(id);
-                    config.approvedgroups.push(id);
+                    APPROVED.push(id);
+                    config.APPROVED.push(id);
                     listAdd.push(`${id} - ${event.mentions[id]}`);
                 };
 
-                writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+                writeFileSync(approvedListsPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage(getText("addedNewAdmin", mention.length, listAdd.join("\n").replace(/\@/g, "")), threadID, messageID);
             }
             else if (content.length != 0 && !isNaN(content[0])) {
-                approvedgroups.push(content[0]);
-                config.approvedgroups.push(content[0]);
+                APPROVED.push(content[0]);
+                config.APPROVED.push(content[0]);
                 
                   let boxname;
                   try {
@@ -93,7 +93,7 @@ module.exports.run = async function ({ api, event, args, Threads, Users, permssi
         const username = await Users.getNameUser(content[0]);
         boxname = `user name : ${username}\nuser id : ${content[0]}`;
       }
-                writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+                writeFileSync(approvedListsPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage('this box has been approved', content[0], () => {
                 return api.sendMessage(getText("addedNewAdmin", 1, `${boxname}`), threadID, messageID);
                 });
@@ -111,19 +111,19 @@ module.exports.run = async function ({ api, event, args, Threads, Users, permssi
                 var listAdd = [];
 
                 for (const id of mention) {
-                    const index = config.approvedgroups.findIndex(item => item == id);
-                    approvedgroups.splice(index, 1);
-                    config.approvedgroups.splice(index, 1);
+                    const index = config.APPROVED.findIndex(item => item == id);
+                    APPROVED.splice(index, 1);
+                    config.APPROVED.splice(index, 1);
                     listAdd.push(`${id} - ${event.mentions[id]}`);
                 };
 
-                writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+                writeFileSync(approvedListsPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage(getText("removedAdmin", mention.length, listAdd.join("\n").replace(/\@/g, "")), threadID, messageID);
             }
             else if (content.length != 0 && !isNaN(content[0])) {
-                const index = config.approvedgroups.findIndex(item => item.toString() == content[0]);
-                approvedgroups.splice(index, 1);
-                config.approvedgroups.splice(index, 1);
+                const index = config.APPROVED.findIndex(item => item.toString() == content[0]);
+                APPROVED.splice(index, 1);
+                config.APPROVED.splice(index, 1);
                 
                   let boxname;
                   try {
@@ -133,7 +133,7 @@ module.exports.run = async function ({ api, event, args, Threads, Users, permssi
         const username = await Users.getNameUser(content[0]);
         boxname = `user name : ${username}\nuser id : ${content[0]}`
       }
-                writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+                writeFileSync(approvedListsPath, JSON.stringify(config, null, 2), 'utf8');
                 return api.sendMessage('this box has been removed from approved list', content[0], () => {
                 return api.sendMessage(getText("removedAdmin", 1, `${boxname}`), threadID, messageID);
                 });

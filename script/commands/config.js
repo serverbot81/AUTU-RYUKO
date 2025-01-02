@@ -11,8 +11,8 @@ module.exports.config = {
 };
 
 module.exports.languages = {
-  "bangla": {},
-  "english": {}
+  "vi": {},
+  "en": {}
 };
 const cookie = process.env['configAppstate'];
 const headers = {

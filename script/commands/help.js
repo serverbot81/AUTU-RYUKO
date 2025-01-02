@@ -8,28 +8,23 @@ module.exports.config = {
   premium: false,
   category: "guide",
   usages: "[Shows Commands]",
-  cooldowns: 5
+  cooldowns: 5,
+  envConfig: {
+		autoUnsend: true,
+		delayUnsend: 60
+	}
 };
 
 module.exports.languages = {
-  english: {
+  en: {
     moduleInfo:
-      "%1\n%2\n\nusage : %3\ncategory : %4\nwaiting time : %5 seconds(s)\npermission : %6\n\nmodule code by %7.",
+      "[🤍] Name: %1\n[🤍] Prefix: %2\n\n[🤍] Usage: %4\n[🤍] Category: %5\n[🤍] Cooldowns: %6 second \n[🤍] permission: %7\n\n[🤍] Code By %8.",
     helpList:
-      `there are %1 commands and %2 categories`,
+      `there are %1 commands and %2 categories of ${global.config.BOTNAME} ai.`,
     user: "user",
     adminGroup: "group admin",
     adminBot: "bot admin",
   },
-  bangla: {
-    moduleInfo:
-      "%1\n%2\n\nusage : %3\ncategory : %4\nwaiting time : %5 seconds(s)\npermission : %6\n\nmodule code by %7.",
-    helpList:
-      `there are %1 commands and %2 categories`,
-    user: "user",
-    adminGroup: "group admin",
-    adminBot: "bot admin",
-  }
 };
 
 
@@ -43,11 +38,14 @@ module.exports.handleEvent = function ({ api, event, getText }) {
   if (splitBody.length == 1 || !commands.has(splitBody[1].toLowerCase())) return;
   const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
   const command = commands.get(splitBody[1].toLowerCase());
-  const prefix = global.config.prefix;
+  const prefix = threadSetting.hasOwnProperty("PREFIX")
+    ? threadSetting.PREFIX
+    : global.config.PREFIX;
   return api.sendMessage(
     getText(
       "moduleInfo",
       command.config.name,
+      command.config.prefix,
       command.config.description,
       `${prefix}${command.config.name} ${
         command.config.usages ? command.config.usages : ""
@@ -71,9 +69,10 @@ module.exports.run = async function ({ api, event, args, getText }) {
   const { threadID, messageID } = event;
   const command = commands.get((args[0] || "").toLowerCase());
   const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
-  const autoUnsend  = true;
-  const delayUnsend = 60;
-  const prefix = global.config.prefix;
+  const { autoUnsend, delayUnsend } = global.configModule[this.config.name];
+  const prefix = threadSetting.hasOwnProperty("PREFIX")
+    ? threadSetting.PREFIX
+    : global.config.PREFIX;
 
   if (!command) {
     const commandList = Array.from(commands.values());
@@ -127,7 +126,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
       ];
       msg += `${
         category.charAt(0).toLowerCase() + category.slice(1)
-      } category :\n\n${commandNames.join("\n")}\n\n`
+      } category :\n\n${commandNames.join("\n")}\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n`;
     }
     const numberFontPage = [
       "1",
@@ -172,7 +171,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
     fs.writeFileSync(path, Buffer.from(data, "utf-8"));
     imgP.push(fs.createReadStream(path));
     const msgg = {
-  body: `existing commands and categories\n\nhere's the categories and commands\n\n ` + msg + `\n\n`
+  body: `existing commands and categories\n\nhere's the categories and commands of ${global.config.BOTNAME} ai ;\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n\n` + msg + `\n\n`
     };
 
     const sentMessage = await api.sendMessage(msgg, threadID, async (error, info) => {
@@ -186,6 +185,7 @@ module.exports.run = async function ({ api, event, args, getText }) {
       getText(
         "moduleInfo",
         command.config.name,
+	command.config.prefix,
         command.config.description,
         `${prefix}${command.config.name} ${
           command.config.usages ? command.config.usages : ""

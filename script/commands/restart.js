@@ -1,17 +1,32 @@
-module.exports.config = {
-	name: "restart",
-	version: "7.0.0",
-	permission: 2,
-	credits: "ryuko",
-	prefix: false,
-  premium: false,
-	description: "restart bot system",
-	category: "admin",
-	usages: "",
-	cooldowns: 0
+const fs = require("fs-extra");
+
+module.exports = {
+	config: {
+		name: "restart",
+		version: "1.0",
+		credits: "NTKhang",
+		cooldowns: 5,
+		prefix: true,
+		hasPermssion: 2,
+		description:  "Restart bot",
+		category: "system",
+		usages:  ""
+	},
+
+	onLoad: function ({ api }) {
+		const pathFile = `${__dirname}/cache/restart.txt`;
+		const chngFile = `${__dirname}/cache/change.txt`;
+		if (fs.existsSync(pathFile)) {
+			const [tid, time] = fs.readFileSync(pathFile, "utf-8").split(" ");
+			api.sendMessage(`✅ | Bot restarted\n⏰ | Time: ${(Date.now() - time) / 1000}s`, tid);
+			fs.unlinkSync(pathFile);
+		}
+	},
+
+	run: async function ({ message, event, getLang }) {
+		const pathFile = `${__dirname}/cache/restart.txt`;
+		fs.writeFileSync(pathFile, `${event.threadID} ${Date.now()}`);
+		await message.reply("⚫⚪🔴 𝐑𝐞𝐬𝐭𝐚𝐫𝐭𝐢𝐧𝐠 𝐁𝐨𝐭...");
+		process.exit(2);
+	}
 };
-module.exports.run = async function({ api, event, args, Threads, Users, Currencies, models }) {
-  const process = require("process");
-  const { threadID, messageID } = event;
-  api.sendMessage(`restarting ${global.config.BOTNAME} ai, please be patient.`, threadID, ()=> process.exit(1));
-}

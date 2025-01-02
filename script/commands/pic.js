@@ -1,7 +1,7 @@
 
 module.exports.config = {
 
-	name: "searchimage",
+	name: "pic",
 	version: "1.0.0",
 	permission: 0,
 	credits: "ryuko",
@@ -31,7 +31,7 @@ const fs = global.nodemodule["fs"];
 
 var query = (event.type == "message_reply") ? event.messageReply.body : args.join(" ");
   //let query = args.join(" ");
-  api.sendMessage(`searching for ${query}`, event.threadID, event.messageID);
+  api.sendMessage(`FINDING: ${query}...`, event.threadID, event.messageID);
   
   let result = await google.image(query, {safe: false});
   if(result.length === 0) {
@@ -45,8 +45,8 @@ var query = (event.type == "message_reply") ? event.messageReply.body : args.joi
   console.log(result)
   
   for(let image of result) {
-    // Only show 6 images
-    if(counter >= 6)
+    // Only show 9 images
+    if(counter >= 9)
       break;
       
     console.log(`${counter} : ${image.url}`);
@@ -82,10 +82,10 @@ var query = (event.type == "message_reply") ? event.messageReply.body : args.joi
     counter += 1;
   }
   
-  api.sendMessage("sending search result.", event.threadID, event.messageID)
+  api.sendMessage("[🤍] SENDING YOUR IMAGES...", event.threadID, event.messageID)
   
   let msg = {
-    body: `image search result for ${query}\n\nfound : ${result.length} image${result.length > 1 ? 's' : ''}\nonly showing : 6 images.`,
+    body: `[🤍] 𝘚𝘵𝘢𝘺 𝘞𝘪𝘵𝘩 𝘛𝘢𝘯𝘷𝘪𝘳 𝘉𝘰𝘵 🥀`,
     attachment: streams
   };
   

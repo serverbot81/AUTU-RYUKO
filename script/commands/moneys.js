@@ -12,11 +12,11 @@ module.exports.config = {
 };
 
 module.exports.languages = {
-	"bangla": {
-		"sotienbanthan": "your current balance : %1$",
-		"sotiennguoikhac": "%1's current balance : %2$."
+	"vi": {
+		"sotienbanthan": "Số tiền bạn đang có: %1$",
+		"sotiennguoikhac": "Số tiền của %1 hiện đang có là: %2$"
 	},
-	"english": {
+	"en": {
 		"sotienbanthan": "your current balance : %1$",
 		"sotiennguoikhac": "%1's current balance : %2$."
 	}
